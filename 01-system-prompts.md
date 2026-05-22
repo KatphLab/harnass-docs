@@ -34,15 +34,15 @@ The base prompt establishes the agent identity and operating mode. Tool descript
 
 ## Prompt Variants
 
-| Variant | Runtime role | Key behavior |
-|---|---|---|
-| Exec Mode | Autonomous task execution | Never ask the user; continue until the task is complete and verified. |
-| Exec Mission Worker | Autonomous subagent inside a mission | Follow assigned skill/procedure and return structured handoff. |
-| Interactive Mode | Human-in-the-loop CLI work | May ask focused questions and delegate subagents. |
-| Interactive Mission Planning | Human-facing mission design | Helps define, split, and launch mission work. |
-| Summary Generator | First-pass conversation compression | Produces structured state summaries. |
-| Summary Updater | Incremental summary maintenance | Updates existing summaries after more work. |
-| Title Generator | Conversation metadata | Produces short session titles. |
+| Variant                      | Runtime role                         | Key behavior                                                          |
+| ---------------------------- | ------------------------------------ | --------------------------------------------------------------------- |
+| Exec Mode                    | Autonomous task execution            | Never ask the user; continue until the task is complete and verified. |
+| Exec Mission Worker          | Autonomous subagent inside a mission | Follow assigned skill/procedure and return structured handoff.        |
+| Interactive Mode             | Human-in-the-loop CLI work           | May ask focused questions and delegate subagents.                     |
+| Interactive Mission Planning | Human-facing mission design          | Helps define, split, and launch mission work.                         |
+| Summary Generator            | First-pass conversation compression  | Produces structured state summaries.                                  |
+| Summary Updater              | Incremental summary maintenance      | Updates existing summaries after more work.                           |
+| Title Generator              | Conversation metadata                | Produces short session titles.                                        |
 
 ---
 
@@ -153,14 +153,14 @@ This means changing a tool description can materially change model behavior even
 
 The prompt architecture works through several repeated mechanisms:
 
-| Mechanism | Effect |
-|---|---|
-| Identity anchoring | The model consistently acts as a software engineering agent. |
-| Imperative redundancy | Important rules appear in prompt, reminders, and tool descriptions. |
-| Verification contract | The model is conditioned to test before completion. |
-| Structured handoff | Tools such as `ExitSpecMode` and `EndFeatureRun` force explicit transitions. |
-| Risk reflection | Shell execution requires risk labels and reasons. |
-| Scope discipline | The model is told to do exactly the requested work. |
+| Mechanism             | Effect                                                                       |
+| --------------------- | ---------------------------------------------------------------------------- |
+| Identity anchoring    | The model consistently acts as a software engineering agent.                 |
+| Imperative redundancy | Important rules appear in prompt, reminders, and tool descriptions.          |
+| Verification contract | The model is conditioned to test before completion.                          |
+| Structured handoff    | Tools such as `ExitSpecMode` and `EndFeatureRun` force explicit transitions. |
+| Risk reflection       | Shell execution requires risk labels and reasons.                            |
+| Scope discipline      | The model is told to do exactly the requested work.                          |
 
 ---
 

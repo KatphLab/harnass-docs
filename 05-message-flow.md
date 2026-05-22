@@ -56,17 +56,17 @@ In Responses-style APIs, these become an ordered event stream. Later requests ma
 
 ## Event Types
 
-| Event | Purpose |
-|---|---|
-| System instructions | Stable operating contract. |
-| User message | Human request or answer. |
-| System reminder | Harness-authored dynamic instruction. |
-| Reasoning item | Model planning or summarized internal state. |
-| Function call | Ordinary tool invocation. |
-| Function output | Result of ordinary tool invocation. |
-| Custom tool call | Nonstandard tool channel, e.g. patch application. |
-| Custom tool output | Result of custom tool invocation. |
-| Assistant message | User-facing text. |
+| Event               | Purpose                                           |
+| ------------------- | ------------------------------------------------- |
+| System instructions | Stable operating contract.                        |
+| User message        | Human request or answer.                          |
+| System reminder     | Harness-authored dynamic instruction.             |
+| Reasoning item      | Model planning or summarized internal state.      |
+| Function call       | Ordinary tool invocation.                         |
+| Function output     | Result of ordinary tool invocation.               |
+| Custom tool call    | Nonstandard tool channel, e.g. patch application. |
+| Custom tool output  | Result of custom tool invocation.                 |
+| Assistant message   | User-facing text.                                 |
 
 A user-role event is not always human-authored. Harness reminders may be represented in the same role slot and must be classified by content/metadata.
 
@@ -166,14 +166,14 @@ The parent-to-worker merge is synchronous: the parent waits for the worker resul
 
 Parallel calls are appropriate for independent reads/searches. Sequential calls are required when later steps depend on earlier results.
 
-| Pattern | Parallel? | Reason |
-|---|---:|---|
-| Read three unrelated files | Yes | Independent observations. |
-| Grep for several symbols | Yes | Independent searches. |
-| Read then patch same file | No | Patch depends on current content. |
-| Patch then test | No | Test depends on patch. |
-| Launch workers for separate modules | Yes | Independent scopes. |
-| Launch workers for same file | Usually no | Conflict risk. |
+| Pattern                             |  Parallel? | Reason                            |
+| ----------------------------------- | ---------: | --------------------------------- |
+| Read three unrelated files          |        Yes | Independent observations.         |
+| Grep for several symbols            |        Yes | Independent searches.             |
+| Read then patch same file           |         No | Patch depends on current content. |
+| Patch then test                     |         No | Test depends on patch.            |
+| Launch workers for separate modules |        Yes | Independent scopes.               |
+| Launch workers for same file        | Usually no | Conflict risk.                    |
 
 ---
 
@@ -181,13 +181,13 @@ Parallel calls are appropriate for independent reads/searches. Sequential calls 
 
 Handoffs are explicit state transitions in the message flow.
 
-| Handoff | Tool | Transition |
-|---|---|---|
-| User clarification | `AskUser` | Model waits for user decision. |
-| Spec approval | `ExitSpecMode` | Planning becomes implementation after approval. |
-| Subagent result | `Task` result | Worker result returns to parent. |
+| Handoff                               | Tool                     | Transition                                                          |
+| ------------------------------------- | ------------------------ | ------------------------------------------------------------------- |
+| User clarification                    | `AskUser`                | Model waits for user decision.                                      |
+| Spec approval                         | `ExitSpecMode`           | Planning becomes implementation after approval.                     |
+| Subagent result                       | `Task` result            | Worker result returns to parent.                                    |
 | Mission proposal / handoff management | Mission planning actions | Orchestrator proposes, dismisses, or updates mission handoff items. |
-| Mission completion | `EndFeatureRun` | Worker returns structured completion to orchestrator. |
+| Mission completion                    | `EndFeatureRun`          | Worker returns structured completion to orchestrator.               |
 
 Handoff outputs should remain in history until they are no longer needed or until a summary preserves their state.
 

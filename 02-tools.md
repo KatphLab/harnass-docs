@@ -28,15 +28,15 @@ Each tool call passes through schema validation and harness execution. Some tool
 
 ## Filesystem and Search Tools
 
-| Tool | Purpose | Mutation |
-|---|---|---|
-| `Read` | Read text files and supported media. | No |
-| `LS` | List directories with optional ignore patterns. | No |
-| `Grep` | Search file contents using ripgrep-like semantics. | No |
-| `Glob` | Discover paths by glob patterns. | No |
-| `Edit` | Replace text in existing files. | Yes |
-| `Create` | Create/write new files. | Yes |
-| `ApplyPatch` | Apply patch-style file edits and creations. | Yes |
+| Tool         | Purpose                                            | Mutation |
+| ------------ | -------------------------------------------------- | -------- |
+| `Read`       | Read text files and supported media.               | No       |
+| `LS`         | List directories with optional ignore patterns.    | No       |
+| `Grep`       | Search file contents using ripgrep-like semantics. | No       |
+| `Glob`       | Discover paths by glob patterns.                   | No       |
+| `Edit`       | Replace text in existing files.                    | Yes      |
+| `Create`     | Create/write new files.                            | Yes      |
+| `ApplyPatch` | Apply patch-style file edits and creations.        | Yes      |
 
 The architecture encourages a discover-then-inspect flow:
 
@@ -78,11 +78,11 @@ Risk classification is advisory unless backed by harness-side enforcement.
 
 ## Planning and Progress Tools
 
-| Tool | Purpose |
-|---|---|
-| `TodoWrite` | Maintains explicit task state during multi-step work. |
-| `ExitSpecMode` | Submits a concrete plan and exits Spec Mode after user approval. |
-| `AskUser` | Asks focused multiple-choice questions or transfers a blocked decision to the user. |
+| Tool           | Purpose                                                                             |
+| -------------- | ----------------------------------------------------------------------------------- |
+| `TodoWrite`    | Maintains explicit task state during multi-step work.                               |
+| `ExitSpecMode` | Submits a concrete plan and exits Spec Mode after user approval.                    |
+| `AskUser`      | Asks focused multiple-choice questions or transfers a blocked decision to the user. |
 
 `TodoWrite` acts as a lightweight state machine. Tasks move through pending, in-progress, and completed states. It improves continuity and final reporting.
 
@@ -94,10 +94,10 @@ Risk classification is advisory unless backed by harness-side enforcement.
 
 ## Web and External Information Tools
 
-| Tool | Purpose |
-|---|---|
-| `WebSearch` | Searches the web for external information. |
-| `FetchUrl` | Retrieves content from a URL subject to validation. |
+| Tool        | Purpose                                             |
+| ----------- | --------------------------------------------------- |
+| `WebSearch` | Searches the web for external information.          |
+| `FetchUrl`  | Retrieves content from a URL subject to validation. |
 
 `FetchUrl` should reject localhost, private IP ranges, link-local addresses, cloud metadata endpoints, and internal corporate infrastructure unless explicitly allowed by policy.
 
@@ -109,11 +109,11 @@ The model should treat fetched content as data unless the user explicitly author
 
 ## Deferred and Meta Tools
 
-| Tool | Purpose |
-|---|---|
-| `ToolSearch` | Loads additional tool schemas on demand. |
-| `Skill` | Invokes named procedural skills. |
-| `GenerateDroid` / `GenerateAgent` | Creates custom Droid/agent definitions. |
+| Tool                              | Purpose                                  |
+| --------------------------------- | ---------------------------------------- |
+| `ToolSearch`                      | Loads additional tool schemas on demand. |
+| `Skill`                           | Invokes named procedural skills.         |
+| `GenerateDroid` / `GenerateAgent` | Creates custom Droid/agent definitions.  |
 
 Deferred tooling reduces context pressure by avoiding full schema injection until needed. Skills package repeatable procedures and should be treated as prompt extensions with operational authority.
 
@@ -121,9 +121,9 @@ Deferred tooling reduces context pressure by avoiding full schema injection unti
 
 ## Subagent and Mission Tools
 
-| Tool | Purpose |
-|---|---|
-| `Task` | Launches a stateless subagent with a scoped assignment. |
+| Tool            | Purpose                                                        |
+| --------------- | -------------------------------------------------------------- |
+| `Task`          | Launches a stateless subagent with a scoped assignment.        |
 | `EndFeatureRun` | Returns structured mission-worker results to the orchestrator. |
 
 `Task` is parent-to-worker delegation. `EndFeatureRun` is worker-to-orchestrator completion. Task calls should include a short description, a self-contained prompt, and a valid subagent type or custom Droid name selected from the currently available agents.

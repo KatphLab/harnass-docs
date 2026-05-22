@@ -38,15 +38,15 @@ Primary trust boundaries:
 
 ## Tool Risk Classes
 
-| Class | Examples | Risk |
-|---|---|---|
-| Read-only local | `Read`, `LS`, `Grep`, `Glob` | Data exposure, prompt injection from files. |
-| Local mutation | `Edit`, `Create`, `ApplyPatch` | Code corruption, unauthorized changes. |
-| Shell execution | `Execute` | Data loss, exfiltration, long-running processes. |
-| External content | `WebSearch`, `FetchUrl` | Prompt injection, SSRF/private URL access. |
-| User handoff | `AskUser`, `ExitSpecMode` | Misleading prompts, approval confusion. |
-| Subagent | `Task`, `EndFeatureRun` | Context leakage, scope drift. |
-| Skill/meta | `Skill`, `GenerateAgent` | Untrusted procedure injection. |
+| Class            | Examples                       | Risk                                             |
+| ---------------- | ------------------------------ | ------------------------------------------------ |
+| Read-only local  | `Read`, `LS`, `Grep`, `Glob`   | Data exposure, prompt injection from files.      |
+| Local mutation   | `Edit`, `Create`, `ApplyPatch` | Code corruption, unauthorized changes.           |
+| Shell execution  | `Execute`                      | Data loss, exfiltration, long-running processes. |
+| External content | `WebSearch`, `FetchUrl`        | Prompt injection, SSRF/private URL access.       |
+| User handoff     | `AskUser`, `ExitSpecMode`      | Misleading prompts, approval confusion.          |
+| Subagent         | `Task`, `EndFeatureRun`        | Context leakage, scope drift.                    |
+| Skill/meta       | `Skill`, `GenerateAgent`       | Untrusted procedure injection.                   |
 
 ---
 
@@ -56,12 +56,12 @@ Shell commands and other risky actions may carry model-generated risk labels. Th
 
 Recommended policy:
 
-| Risk | Allowed automatically? | Notes |
-|---|---:|---|
-| Low | Usually | Read-only commands, harmless inspection. |
-| Medium | Usually with logging | Tests, builds, reversible local changes. |
-| High | Require explicit policy or confirmation | Deletes, migrations, network writes, credential access. |
-| Critical | Block by default | Destructive broad commands, secret exfiltration, unsafe external writes. |
+| Risk     |                  Allowed automatically? | Notes                                                                    |
+| -------- | --------------------------------------: | ------------------------------------------------------------------------ |
+| Low      |                                 Usually | Read-only commands, harmless inspection.                                 |
+| Medium   |                    Usually with logging | Tests, builds, reversible local changes.                                 |
+| High     | Require explicit policy or confirmation | Deletes, migrations, network writes, credential access.                  |
+| Critical |                        Block by default | Destructive broad commands, secret exfiltration, unsafe external writes. |
 
 The harness should enforce policy server-side for high-risk operations rather than trusting model self-classification.
 
@@ -174,14 +174,14 @@ Fetched pages should not be allowed to override harness instructions.
 
 ## Threat Summary
 
-| Threat | Impact | Mitigation |
-|---|---|---|
-| Destructive command | Data loss | Command policy, risk gates, sandboxing. |
-| Secret exposure in logs | Credential compromise | Redaction, limited logging, retention controls. |
-| Prompt injection from files/web | Wrong or unsafe actions | Instruction hierarchy, content isolation. |
-| Unauthorized pre-spec edit | Scope violation | Enforce mutation gate in tool router. |
-| Subagent overexposure | Data leakage | Scoped prompts, reduced privileges, and redaction. |
-| External API write | Unintended side effects | Approval gates and allowlists. |
+| Threat                          | Impact                  | Mitigation                                         |
+| ------------------------------- | ----------------------- | -------------------------------------------------- |
+| Destructive command             | Data loss               | Command policy, risk gates, sandboxing.            |
+| Secret exposure in logs         | Credential compromise   | Redaction, limited logging, retention controls.    |
+| Prompt injection from files/web | Wrong or unsafe actions | Instruction hierarchy, content isolation.          |
+| Unauthorized pre-spec edit      | Scope violation         | Enforce mutation gate in tool router.              |
+| Subagent overexposure           | Data leakage            | Scoped prompts, reduced privileges, and redaction. |
+| External API write              | Unintended side effects | Approval gates and allowlists.                     |
 
 ---
 

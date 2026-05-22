@@ -12,11 +12,11 @@ Missions Mode is a behavioral overlay on Exec and Interactive Mode, not a comple
 
 ## Core Roles
 
-| Role | Responsibility |
-|---|---|
+| Role         | Responsibility                                                                             |
+| ------------ | ------------------------------------------------------------------------------------------ |
 | Orchestrator | Owns mission plan, decomposes work, launches workers, reviews results, resolves conflicts. |
-| Worker | Executes a bounded task, follows required skills, verifies work, returns `EndFeatureRun`. |
-| User | Defines mission objective and approves or redirects high-level scope when needed. |
+| Worker       | Executes a bounded task, follows required skills, verifies work, returns `EndFeatureRun`.  |
+| User         | Defines mission objective and approves or redirects high-level scope when needed.          |
 
 ---
 
@@ -88,15 +88,15 @@ Mission workflows can use project-local metadata files to persist state outside 
 
 Typical metadata:
 
-| Artifact | Purpose |
-|---|---|
-| `mission.md` | Mission description and durable context. |
-| `validation-contract.md` | Definition of done, acceptance criteria, and assertion IDs. |
-| `features.json` | Maps implemented features to validation assertions. |
-| `validation-state.json` | Current validation state, progress, and blockers. |
-| `milestones.json` | Ordered milestone list and completion state. |
-| Worker status | Assignment state and current owner. |
-| Handoff report | Worker result, verification, changed files, blockers. |
+| Artifact                   | Purpose                                                       |
+| -------------------------- | ------------------------------------------------------------- |
+| `mission.md`               | Mission description and durable context.                      |
+| `validation-contract.md`   | Definition of done, acceptance criteria, and assertion IDs.   |
+| `features.json`            | Maps implemented features to validation assertions.           |
+| `validation-state.json`    | Current validation state, progress, and blockers.             |
+| `milestones.json`          | Ordered milestone list and completion state.                  |
+| Worker status              | Assignment state and current owner.                           |
+| Handoff report             | Worker result, verification, changed files, blockers.         |
 | Worker artifacts directory | Files and reports written by workers for orchestrator review. |
 
 Metadata makes long missions auditable and recoverable after context compaction or process restart. The validation contract is the definition of done: every assertion should be claimed by exactly one feature entry, with no duplicates and no orphans.

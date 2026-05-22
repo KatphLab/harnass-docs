@@ -12,18 +12,18 @@ Target platform: `@earendil-works/pi-coding-agent` TypeScript extension API.
 
 ## Architecture Mapping
 
-| Harness capability | Pi mechanism | Implementation strategy |
-|---|---|---|
-| Exec Mode | Agent-start hook / prompt extension | Append autonomous execution contract and hide interactive tools. |
-| Interactive Mode | Default CLI + custom tools | Add `AskUser`, `Task`, skills, and UI helpers. |
-| Spec Mode | Dynamic reminder + tool gate | Inject spec reminder; block mutation until `ExitSpecMode` approval. |
-| Mission workers | Subagent process or SDK session | Spawn scoped stateless workers and require `EndFeatureRun`. |
-| Hardened shell | Custom/replaced bash tool | Require summary, timeout, risk level, and risk reason. |
-| File/search tools | Built-in wrappers or replacements | Add richer descriptions, path policy, and consistent schemas. |
-| Todo tracking | Stateful custom tool | Persist task state in session/tool metadata. |
-| Skills | Pi skill system | Bridge `Skill` tool to SKILL.md loading and bootstrap required mission skills. |
-| Dynamic reminders | Context injection hook | Add harness-authored `<system-reminder>` blocks. |
-| Compaction | Session compaction hook | Produce structured summaries preserving active state. |
+| Harness capability | Pi mechanism                        | Implementation strategy                                                        |
+| ------------------ | ----------------------------------- | ------------------------------------------------------------------------------ |
+| Exec Mode          | Agent-start hook / prompt extension | Append autonomous execution contract and hide interactive tools.               |
+| Interactive Mode   | Default CLI + custom tools          | Add `AskUser`, `Task`, skills, and UI helpers.                                 |
+| Spec Mode          | Dynamic reminder + tool gate        | Inject spec reminder; block mutation until `ExitSpecMode` approval.            |
+| Mission workers    | Subagent process or SDK session     | Spawn scoped stateless workers and require `EndFeatureRun`.                    |
+| Hardened shell     | Custom/replaced bash tool           | Require summary, timeout, risk level, and risk reason.                         |
+| File/search tools  | Built-in wrappers or replacements   | Add richer descriptions, path policy, and consistent schemas.                  |
+| Todo tracking      | Stateful custom tool                | Persist task state in session/tool metadata.                                   |
+| Skills             | Pi skill system                     | Bridge `Skill` tool to SKILL.md loading and bootstrap required mission skills. |
+| Dynamic reminders  | Context injection hook              | Add harness-authored `<system-reminder>` blocks.                               |
+| Compaction         | Session compaction hook             | Produce structured summaries preserving active state.                          |
 
 ---
 
@@ -131,13 +131,13 @@ Deliverables:
 
 Mode policy:
 
-| Mode | Prompt behavior | Tool behavior |
-|---|---|---|
-| Exec | Autonomous, no user prompts. | Hide or block `AskUser`. |
-| Interactive | Human-in-loop allowed. | Enable `AskUser` and `Task`. |
-| Spec | Interactive + read-only planning reminder. | Block mutation until approval. |
-| Mission worker | Scoped autonomous work. | Require `EndFeatureRun`. |
-| Summary/title | Narrow metadata generation. | Disable tools unless needed. |
+| Mode           | Prompt behavior                            | Tool behavior                  |
+| -------------- | ------------------------------------------ | ------------------------------ |
+| Exec           | Autonomous, no user prompts.               | Hide or block `AskUser`.       |
+| Interactive    | Human-in-loop allowed.                     | Enable `AskUser` and `Task`.   |
+| Spec           | Interactive + read-only planning reminder. | Block mutation until approval. |
+| Mission worker | Scoped autonomous work.                    | Require `EndFeatureRun`.       |
+| Summary/title  | Narrow metadata generation.                | Disable tools unless needed.   |
 
 ---
 

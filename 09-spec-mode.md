@@ -38,7 +38,7 @@ Tool descriptions also reference this phrase. In particular, `ExitSpecMode` is i
 
 ## Verbatim Spec Mode Reminder
 
-```xml
+````xml
 <system-reminder>
 Spec mode is active. Do NOT edit files, change configuration, make commits, issue writes to external systems (e.g., Linear/GitHub/Slack API writes, starting services or processes), or otherwise mutate the repo or system state until the user approves the spec. Read-only tools remain available: read files, run non-mutating commands, and fetch linked artifacts (tickets, bug reports, logs/traces, Sentry/Axiom, Slack threads, linked PRs, design docs), subject to autonomy and sandbox rules.
 
@@ -48,7 +48,7 @@ Use the AskUser tool to gather requirements, clarify decisions, and choose among
 
 When your spec involves architecture, data flows, state machines, or complex interactions, include Mermaid diagrams (using ```mermaid code blocks) in your plan to visualize the design. Only include diagrams when they add clarity -- not for simple or linear changes. Keep participant/node names short (under ~20 chars) so diagrams render as ASCII art in the terminal. Use short aliases and add a legend comment below the diagram if full names are needed. Only use these supported diagram types: flowchart/graph, stateDiagram, sequenceDiagram, classDiagram, erDiagram, xychart-beta. Do NOT use gantt, pie, gitGraph, mindmap, timeline, journey, quadrantChart, sankey, or block diagrams as they cannot be rendered.
 </system-reminder>
-```
+````
 
 ---
 
@@ -111,10 +111,10 @@ This boundary is primarily instruction-level unless the harness additionally dis
 
 `ExitSpecMode` is the planning-to-implementation handoff.
 
-| Field | Required | Meaning |
-|---|---:|---|
-| `plan` | yes | Concrete markdown plan to show to the user. |
-| `title` | no | Short title used for the saved spec artifact. |
+| Field   | Required | Meaning                                       |
+| ------- | -------: | --------------------------------------------- |
+| `plan`  |      yes | Concrete markdown plan to show to the user.   |
+| `title` |       no | Short title used for the saved spec artifact. |
 
 The submitted plan should be specific enough for implementation. It should not contain unresolved alternatives. If multiple viable approaches remain, the agent should first call `AskUser` with a concise choice prompt, then submit the selected plan through `ExitSpecMode`.
 
@@ -144,11 +144,11 @@ After `ExitSpecMode`, the harness returns structured state to the model. Approva
 
 Field meanings:
 
-| Field | Meaning |
-|---|---|
-| `approved` | Whether implementation may begin. |
-| `message` | Human-readable instruction or status. |
-| `filePath` | Saved spec artifact path. |
+| Field      | Meaning                                           |
+| ---------- | ------------------------------------------------- |
+| `approved` | Whether implementation may begin.                 |
+| `message`  | Human-readable instruction or status.             |
+| `filePath` | Saved spec artifact path.                         |
 | `isEdited` | Whether the user edited the plan before approval. |
 
 The model should treat `approved: true` as the implementation gate. If `isEdited: true`, the saved spec should be treated as authoritative.
@@ -184,10 +184,10 @@ If not approved: model revises, asks, or stops
 
 ## AskUser vs ExitSpecMode
 
-| Tool | Purpose | When used |
-|---|---|---|
-| `AskUser` | Transfer a focused decision or blocker to the user. | Before spec submission for ambiguity; after approval for operator-level blockers. |
-| `ExitSpecMode` | Transfer a complete implementation plan to the approval UI. | Once one concrete plan is ready. |
+| Tool           | Purpose                                                     | When used                                                                         |
+| -------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `AskUser`      | Transfer a focused decision or blocker to the user.         | Before spec submission for ambiguity; after approval for operator-level blockers. |
+| `ExitSpecMode` | Transfer a complete implementation plan to the approval UI. | Once one concrete plan is ready.                                                  |
 
 `AskUser` is not a replacement for `ExitSpecMode`. It resolves a question. `ExitSpecMode` exits the planning gate. If multiple implementation approaches remain viable, the agent should present options, ask the user to choose, and only then submit one concrete plan.
 
@@ -197,14 +197,14 @@ If not approved: model revises, asks, or stops
 
 Spec Mode runs on the same cumulative event stream as other interactive sessions. The request history can contain:
 
-| Event kind | Meaning |
-|---|---|
-| `role: user` | Human messages and harness-authored reminders |
-| `type: reasoning` | Prior model reasoning item, sometimes summarized or encrypted |
-| `type: function_call` | Historical function-tool call |
-| `type: function_call_output` | Historical function-tool result |
-| `type: custom_tool_call` | Historical custom-tool call, e.g. patch application |
-| `type: custom_tool_call_output` | Historical custom-tool result |
+| Event kind                      | Meaning                                                       |
+| ------------------------------- | ------------------------------------------------------------- |
+| `role: user`                    | Human messages and harness-authored reminders                 |
+| `type: reasoning`               | Prior model reasoning item, sometimes summarized or encrypted |
+| `type: function_call`           | Historical function-tool call                                 |
+| `type: function_call_output`    | Historical function-tool result                               |
+| `type: custom_tool_call`        | Historical custom-tool call, e.g. patch application           |
+| `type: custom_tool_call_output` | Historical custom-tool result                                 |
 
 Later turns replay prior events. Implementations and event processors should deduplicate calls by stable ids such as `call_id` rather than treating each request as a fresh delta.
 
@@ -221,13 +221,13 @@ WebSearch, TodoWrite, FetchUrl, ToolSearch, Skill, Task
 
 Expected phase split:
 
-| Phase | Dominant tools |
-|---|---|
-| Planning | `Read`, `LS`, `Grep`, `Glob`, `TodoWrite`, `AskUser` |
-| Handoff | `ExitSpecMode` |
-| Implementation | `ApplyPatch`, `Read`, `Execute`, `TodoWrite` |
-| Validation | `Execute`, `Read` |
-| Finalization | `TodoWrite`, assistant final response |
+| Phase          | Dominant tools                                       |
+| -------------- | ---------------------------------------------------- |
+| Planning       | `Read`, `LS`, `Grep`, `Glob`, `TodoWrite`, `AskUser` |
+| Handoff        | `ExitSpecMode`                                       |
+| Implementation | `ApplyPatch`, `Read`, `Execute`, `TodoWrite`         |
+| Validation     | `Execute`, `Read`                                    |
+| Finalization   | `TodoWrite`, assistant final response                |
 
 `ApplyPatch` may appear as a custom-tool channel rather than as an ordinary function call. Message processors should handle both ordinary function calls and custom tool calls.
 
@@ -235,12 +235,12 @@ Expected phase split:
 
 ## Relationship to Other Handoffs
 
-| Handoff type | Tool/mechanism | Purpose |
-|---|---|---|
-| Spec approval handoff | `ExitSpecMode` | Planning -> implementation after user approval. |
-| User clarification handoff | `AskUser` | Agent -> user decision, then resume. |
-| Subagent handoff | `Task` result | Subagent -> parent agent report. |
-| Mission worker handoff | `EndFeatureRun` | Worker -> mission orchestrator completion state. |
+| Handoff type               | Tool/mechanism  | Purpose                                          |
+| -------------------------- | --------------- | ------------------------------------------------ |
+| Spec approval handoff      | `ExitSpecMode`  | Planning -> implementation after user approval.  |
+| User clarification handoff | `AskUser`       | Agent -> user decision, then resume.             |
+| Subagent handoff           | `Task` result   | Subagent -> parent agent report.                 |
+| Mission worker handoff     | `EndFeatureRun` | Worker -> mission orchestrator completion state. |
 
 ---
 

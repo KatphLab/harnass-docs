@@ -53,16 +53,16 @@ The loop is repeated until the task is complete, blocked, or handed off.
 
 Common action patterns:
 
-| Intent | Tool pattern |
-|---|---|
-| Understand codebase | `Grep` / `Glob` / `LS` → `Read` |
-| Modify code | `Read` → `ApplyPatch` / `Edit` / `Create` |
-| Validate change | `Execute` → inspect output → fix loop |
-| Track work | `TodoWrite` before and during multi-step work |
-| Ask for decision | `AskUser` |
-| Submit spec | `ExitSpecMode` |
-| Delegate work | `Task` |
-| Complete worker run | `EndFeatureRun` |
+| Intent              | Tool pattern                                  |
+| ------------------- | --------------------------------------------- |
+| Understand codebase | `Grep` / `Glob` / `LS` → `Read`               |
+| Modify code         | `Read` → `ApplyPatch` / `Edit` / `Create`     |
+| Validate change     | `Execute` → inspect output → fix loop         |
+| Track work          | `TodoWrite` before and during multi-step work |
+| Ask for decision    | `AskUser`                                     |
+| Submit spec         | `ExitSpecMode`                                |
+| Delegate work       | `Task`                                        |
+| Complete worker run | `EndFeatureRun`                               |
 
 The model often reasons in intent language rather than naming exact tools. Tool descriptions then guide the final call shape. This is why schema descriptions matter: they shape the final translation from intent to tool invocation.
 
@@ -148,14 +148,14 @@ The harness expects retry and recovery loops rather than immediate failure.
 
 Common recovery patterns:
 
-| Error | Expected response |
-|---|---|
-| File not found | Use `LS`, `Glob`, or `Grep` to locate the correct path. |
-| Patch failed | Re-read the file and apply a smaller/context-correct patch. |
-| Command failed | Inspect stderr/stdout, fix root cause, rerun targeted command. |
-| Missing dependency | Check package manager files before adding/installing. |
-| Ambiguous user requirement | Use `AskUser` if the choice affects implementation. |
-| Spec not approved | Do not mutate; revise or wait for approval. |
+| Error                      | Expected response                                              |
+| -------------------------- | -------------------------------------------------------------- |
+| File not found             | Use `LS`, `Glob`, or `Grep` to locate the correct path.        |
+| Patch failed               | Re-read the file and apply a smaller/context-correct patch.    |
+| Command failed             | Inspect stderr/stdout, fix root cause, rerun targeted command. |
+| Missing dependency         | Check package manager files before adding/installing.          |
+| Ambiguous user requirement | Use `AskUser` if the choice affects implementation.            |
+| Spec not approved          | Do not mutate; revise or wait for approval.                    |
 
 Recovery should remain scoped. The agent should not perform broad unrelated refactors just because a local fix failed. Long test-fix loops need an operator-visible budget or stop condition so flaky failures do not become unbounded tool cycles.
 

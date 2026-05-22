@@ -128,13 +128,13 @@ Avoid hard dependency on a single external model/provider. Configure fallback mo
 
 Tool visibility and permission should depend on mode:
 
-| Mode | Recommended policy |
-|---|---|
-| Exec | Allow mutation with risk controls. |
-| Interactive | Allow mutation with user/harness policy. |
-| Spec | Read-only until approval. |
-| Mission worker | Scope to assigned repo/task. |
-| Summary/title | No tools or only read-only context. |
+| Mode           | Recommended policy                       |
+| -------------- | ---------------------------------------- |
+| Exec           | Allow mutation with risk controls.       |
+| Interactive    | Allow mutation with user/harness policy. |
+| Spec           | Read-only until approval.                |
+| Mission worker | Scope to assigned repo/task.             |
+| Summary/title  | No tools or only read-only context.      |
 
 ---
 
