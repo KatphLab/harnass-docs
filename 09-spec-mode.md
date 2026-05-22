@@ -103,7 +103,7 @@ Forbidden before approval:
 - start long-lived services/processes,
 - otherwise mutate repository or system state.
 
-This boundary is primarily instruction-level unless the harness additionally disables mutation-capable tools. Architecture should therefore not rely on the reminder alone for hard security boundaries.
+This boundary is primarily instruction-level unless the harness additionally disables mutation-capable tools. Architecture should therefore not rely on the reminder alone for hard security boundaries; the tool router should enforce the mutation gate when correctness or safety depends on it.
 
 ---
 
@@ -189,7 +189,7 @@ If not approved: model revises, asks, or stops
 | `AskUser` | Transfer a focused decision or blocker to the user. | Before spec submission for ambiguity; after approval for operator-level blockers. |
 | `ExitSpecMode` | Transfer a complete implementation plan to the approval UI. | Once one concrete plan is ready. |
 
-`AskUser` is not a replacement for `ExitSpecMode`. It resolves a question. `ExitSpecMode` exits the planning gate.
+`AskUser` is not a replacement for `ExitSpecMode`. It resolves a question. `ExitSpecMode` exits the planning gate. If multiple implementation approaches remain viable, the agent should present options, ask the user to choose, and only then submit one concrete plan.
 
 ---
 

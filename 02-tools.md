@@ -57,10 +57,11 @@ Mutation tools should be gated by mode policy. For example, Spec Mode allows sea
 Important semantics:
 
 - working directory and environment changes do not persist between calls unless explicitly encoded in the command,
-- commands require a summary,
+- commands require a short human-readable summary,
 - commands include risk level and risk reason,
 - long-running commands need explicit timeout or fire-and-forget behavior,
-- output becomes part of the event history.
+- output becomes part of the event history,
+- descriptions can include directory-verification, path-quoting, git-safety, and PR-safety guidance.
 
 `Execute` is used for:
 
@@ -81,11 +82,13 @@ Risk classification is advisory unless backed by harness-side enforcement.
 |---|---|
 | `TodoWrite` | Maintains explicit task state during multi-step work. |
 | `ExitSpecMode` | Submits a concrete plan and exits Spec Mode after user approval. |
-| `AskUser` | Asks focused questions or transfers a blocked decision to the user. |
+| `AskUser` | Asks focused multiple-choice questions or transfers a blocked decision to the user. |
 
 `TodoWrite` acts as a lightweight state machine. Tasks move through pending, in-progress, and completed states. It improves continuity and final reporting.
 
 `ExitSpecMode` and `AskUser` are handoff tools. They change who owns the next decision: the model, the user, or the implementation phase.
+
+`AskUser` should be constrained to a small questionnaire, typically 1–4 focused questions. Each question should include enough context for the user to decide, and options should be explicit while still allowing an "own answer" path in the UI.
 
 ---
 
@@ -95,6 +98,8 @@ Risk classification is advisory unless backed by harness-side enforcement.
 |---|---|
 | `WebSearch` | Searches the web for external information. |
 | `FetchUrl` | Retrieves content from a URL subject to validation. |
+
+`FetchUrl` should reject localhost, private IP ranges, link-local addresses, cloud metadata endpoints, and internal corporate infrastructure unless explicitly allowed by policy.
 
 External-content tools need stricter policy than local read tools because they can expose the model to prompt injection, untrusted instructions, private URLs, or sensitive documents.
 
@@ -108,7 +113,7 @@ The model should treat fetched content as data unless the user explicitly author
 |---|---|
 | `ToolSearch` | Loads additional tool schemas on demand. |
 | `Skill` | Invokes named procedural skills. |
-| `GenerateAgent` | Creates custom agent definitions. |
+| `GenerateDroid` / `GenerateAgent` | Creates custom Droid/agent definitions. |
 
 Deferred tooling reduces context pressure by avoiding full schema injection until needed. Skills package repeatable procedures and should be treated as prompt extensions with operational authority.
 
@@ -118,19 +123,21 @@ Deferred tooling reduces context pressure by avoiding full schema injection unti
 
 | Tool | Purpose |
 |---|---|
-| `Task` | Launches a subagent with a scoped assignment. |
+| `Task` | Launches a stateless subagent with a scoped assignment. |
 | `EndFeatureRun` | Returns structured mission-worker results to the orchestrator. |
 
-`Task` is parent-to-worker delegation. `EndFeatureRun` is worker-to-orchestrator completion.
+`Task` is parent-to-worker delegation. `EndFeatureRun` is worker-to-orchestrator completion. Task calls should include a short description, a self-contained prompt, and a valid subagent type or custom Droid name selected from the currently available agents.
 
 A worker handoff should include:
 
 - what was implemented,
 - what remains,
 - files changed,
-- tests/checks run,
+- tests/checks run with exit codes or observations,
+- tests added and cases covered,
 - verification evidence,
-- blockers or follow-up work.
+- blockers or follow-up work,
+- whether control should return to the orchestrator.
 
 ---
 

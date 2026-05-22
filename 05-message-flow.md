@@ -10,6 +10,28 @@ The harness should be modeled as an event-driven conversation system rather than
 
 ---
 
+## Model Routing Flow
+
+The model-facing request can pass through a routing/proxy layer before reaching the inference provider:
+
+```text
+CLI / orchestrator
+    ↓
+Prompt and tool assembly
+    ↓
+Model proxy / router
+    ↓
+Inference provider
+    ↓
+Response parser
+    ↓
+Tool router or assistant output
+```
+
+The routing layer may provide model selection, fallback, rate limiting, token accounting, prompt caching, and optional request/response logging. These concerns are runtime architecture, not application logic, but they strongly affect cost, latency, privacy, and reliability.
+
+---
+
 ## Conversation Topology
 
 A typical agentic session has this shape:
@@ -125,14 +147,18 @@ Resume work
 ```text
 Parent identifies independent task
     ↓
+Parent synthesizes scoped prompt
+    ↓
 Task(worker prompt)
     ↓
-Worker performs scoped work
+Worker performs scoped work in isolated context
     ↓
 Worker returns result/handoff
     ↓
-Parent merges result
+Parent appends result and decides next step
 ```
+
+The parent-to-worker merge is synchronous: the parent waits for the worker result before continuing that branch of reasoning.
 
 ---
 
@@ -160,6 +186,7 @@ Handoffs are explicit state transitions in the message flow.
 | User clarification | `AskUser` | Model waits for user decision. |
 | Spec approval | `ExitSpecMode` | Planning becomes implementation after approval. |
 | Subagent result | `Task` result | Worker result returns to parent. |
+| Mission proposal / handoff management | Mission planning actions | Orchestrator proposes, dismisses, or updates mission handoff items. |
 | Mission completion | `EndFeatureRun` | Worker returns structured completion to orchestrator. |
 
 Handoff outputs should remain in history until they are no longer needed or until a summary preserves their state.

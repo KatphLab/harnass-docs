@@ -17,11 +17,11 @@ Target platform: `@earendil-works/pi-coding-agent` TypeScript extension API.
 | Exec Mode | Agent-start hook / prompt extension | Append autonomous execution contract and hide interactive tools. |
 | Interactive Mode | Default CLI + custom tools | Add `AskUser`, `Task`, skills, and UI helpers. |
 | Spec Mode | Dynamic reminder + tool gate | Inject spec reminder; block mutation until `ExitSpecMode` approval. |
-| Mission workers | Subagent process or SDK session | Spawn scoped workers and require `EndFeatureRun`. |
+| Mission workers | Subagent process or SDK session | Spawn scoped stateless workers and require `EndFeatureRun`. |
 | Hardened shell | Custom/replaced bash tool | Require summary, timeout, risk level, and risk reason. |
 | File/search tools | Built-in wrappers or replacements | Add richer descriptions, path policy, and consistent schemas. |
 | Todo tracking | Stateful custom tool | Persist task state in session/tool metadata. |
-| Skills | Pi skill system | Bridge `Skill` tool to SKILL.md loading. |
+| Skills | Pi skill system | Bridge `Skill` tool to SKILL.md loading and bootstrap required mission skills. |
 | Dynamic reminders | Context injection hook | Add harness-authored `<system-reminder>` blocks. |
 | Compaction | Session compaction hook | Produce structured summaries preserving active state. |
 
@@ -67,6 +67,10 @@ pi-harness-extension/
 │   │   ├── web-search.ts
 │   │   ├── fetch-url.ts
 │   │   └── policy.ts
+│   ├── mission/
+│   │   ├── metadata.ts
+│   │   ├── validation-contract.ts
+│   │   └── handoff-management.ts
 │   ├── subagents/
 │   │   ├── worker.md
 │   │   ├── scout.md
@@ -212,29 +216,34 @@ Deliverables:
 - subagent process/session runner,
 - `EndFeatureRun` schema,
 - mission metadata storage,
+- validation contract support,
+- handoff-management helpers,
 - concurrency limits.
 
 Subagent runner behavior:
 
 1. Build scoped worker prompt.
-2. Start isolated worker session/process.
-3. Stream or collect worker events.
-4. Enforce worker timeout and tool policy.
-5. Require structured handoff.
-6. Return summary to parent.
+2. Include required skills and exact handoff expectations.
+3. Start isolated worker session/process.
+4. Stream or collect worker events.
+5. Enforce worker timeout and tool policy.
+6. Require structured handoff.
+7. Return summary to parent synchronously.
 
 Concurrency should default to a small limit, such as four workers, to avoid resource exhaustion and edit conflicts.
 
 ---
 
-## Phase 6 — Skills and Agent Generation
+## Phase 6 — Skills, Mission Planning, and Agent Generation
 
 Deliverables:
 
 - `Skill` bridge tool,
 - skill lookup and loading,
 - missing-skill error behavior,
-- optional `GenerateAgent` tool,
+- optional `GenerateDroid` / `GenerateAgent` tool,
+- mission-planning bootstrap for required skills,
+- validation-contract coverage checks,
 - project vs user agent scope policy.
 
 Security requirements:
@@ -242,6 +251,7 @@ Security requirements:
 - project-local agents require explicit trust policy,
 - generated agents should be reviewed before use,
 - skills should be treated as prompt extensions,
+- missing required mission skills should force return to orchestrator rather than improvisation,
 - skill content should not override higher-priority harness instructions.
 
 ---
@@ -309,8 +319,9 @@ Release checklist:
 - [ ] Spec Mode blocks mutation before approval.
 - [ ] `ExitSpecMode` saves and returns approval state.
 - [ ] Shell tool enforces risk policy.
-- [ ] `Task` launches isolated workers.
+- [ ] `Task` launches isolated stateless workers.
 - [ ] `EndFeatureRun` validates structured handoff.
+- [ ] Mission validation contracts enforce no duplicate/orphan assertions.
 - [ ] Compaction preserves active state.
 - [ ] Logs redact sensitive output.
 

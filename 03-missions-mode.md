@@ -6,6 +6,8 @@
 
 Missions Mode coordinates complex work by splitting it across an orchestrator and one or more workers. The orchestrator plans, delegates, merges results, and decides when the mission is complete. Workers execute scoped assignments and return structured handoffs.
 
+Missions Mode is a behavioral overlay on Exec and Interactive Mode, not a completely separate agent type. It combines mission-planning skills, metadata files, validation contracts, `Task` delegation, and `EndFeatureRun` handoffs.
+
 ---
 
 ## Core Roles
@@ -54,9 +56,13 @@ The orchestrator should:
 - inspect handoff results,
 - resolve conflicts,
 - perform final validation,
-- produce the final user-facing summary.
+- produce the final user-facing summary,
+- manage validation contracts and assertion coverage,
+- own mission metadata such as milestones and validation state.
 
-The orchestrator should not simply dump the full parent conversation into every worker. It should synthesize a scoped prompt containing only relevant objective, files, constraints, and expected output.
+The orchestrator should not simply dump the full parent conversation into every worker. It should synthesize a scoped prompt containing only relevant objective, files, constraints, expected output, and any prior findings needed by that worker.
+
+Orchestrator-only responsibilities include user communication, planning, acceptance criteria, milestone ordering, scope changes, and worker lifecycle management.
 
 ---
 
@@ -69,9 +75,10 @@ A worker should:
 - stay within scope,
 - run appropriate verification,
 - report blockers rather than silently skipping work,
-- return through `EndFeatureRun`.
+- return through `EndFeatureRun`,
+- re-invoke required skills if compaction or context loss removes them.
 
-Workers are usually Exec-mode agents. They should not ask the user directly unless their assignment explicitly supports that interaction path.
+Workers are usually Exec-mode agents. They should not ask the user directly unless their assignment explicitly supports that interaction path. They are stateless relative to the parent: they receive a curated prompt and their own prompt context, not the full parent thread.
 
 ---
 
@@ -83,12 +90,16 @@ Typical metadata:
 
 | Artifact | Purpose |
 |---|---|
-| Mission plan | Objective, scope, assignments, acceptance criteria. |
+| `mission.md` | Mission description and durable context. |
+| `validation-contract.md` | Definition of done, acceptance criteria, and assertion IDs. |
+| `features.json` | Maps implemented features to validation assertions. |
+| `validation-state.json` | Current validation state, progress, and blockers. |
+| `milestones.json` | Ordered milestone list and completion state. |
 | Worker status | Assignment state and current owner. |
 | Handoff report | Worker result, verification, changed files, blockers. |
-| Validation record | Final checks and pass/fail evidence. |
+| Worker artifacts directory | Files and reports written by workers for orchestrator review. |
 
-Metadata makes long missions auditable and recoverable after context compaction or process restart.
+Metadata makes long missions auditable and recoverable after context compaction or process restart. The validation contract is the definition of done: every assertion should be claimed by exactly one feature entry, with no duplicates and no orphans.
 
 ---
 
@@ -98,11 +109,14 @@ A good worker prompt includes:
 
 - mission objective,
 - worker-specific task,
-- files/directories of interest,
+- step-by-step instructions,
+- files/directories of interest, ideally absolute paths,
+- relevant context snippets from prior work,
 - constraints and non-goals,
 - required skills or procedures,
 - expected verification,
-- exact handoff expectations.
+- exact handoff expectations,
+- requested output format, usually a structured markdown report.
 
 Example structure:
 
@@ -136,7 +150,7 @@ Poor parallel splits:
 - unclear ownership of shared state,
 - broad overlapping bug fixes.
 
-When dependencies exist, serialize the tasks.
+When dependencies exist, serialize the tasks. The `Task` merge model is synchronous and blocking: the parent waits for worker results, appends them to the parent event history, and then decides the next step.
 
 ---
 
@@ -155,7 +169,7 @@ Expected handoff content:
 - blockers,
 - whether the orchestrator should continue or reassign work.
 
-The orchestrator uses this handoff to decide whether to merge, retry, delegate follow-up, or finalize.
+The orchestrator uses this handoff to decide whether to merge, retry, delegate follow-up, or finalize. Worker failure is treated as information, not automatic mission failure; the orchestrator may rephrase the assignment, add context, or launch a debug/fix worker.
 
 ---
 
@@ -177,4 +191,7 @@ When worker outputs conflict, the orchestrator should:
 - Avoid parallel edits to the same file.
 - Require structured handoffs from every worker.
 - Keep mission metadata durable.
+- Treat validation contracts as the source of truth for done-ness.
+- Bootstrap required mission skills explicitly before planning.
+- Keep `ProposeMission`/handoff-management actions separate from worker implementation tasks.
 - Let the orchestrator own final validation and user communication.

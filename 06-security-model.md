@@ -31,7 +31,8 @@ Primary trust boundaries:
 - model ↔ tool router,
 - tool router ↔ filesystem/shell/network,
 - parent agent ↔ subagent,
-- local context ↔ persisted logs.
+- local context ↔ persisted logs,
+- harness ↔ proxy/model-routing layer.
 
 ---
 
@@ -100,7 +101,7 @@ Persistence policy should define:
 - redaction rules,
 - deletion procedures.
 
-Prompt and response logs are high-sensitivity artifacts because they may contain everything the model saw or produced.
+Prompt and response logs are high-sensitivity artifacts because they may contain everything the model saw or produced. A proxy or spend-log database that stores full prompts becomes a sensitive data repository, not just an observability backend.
 
 ---
 
@@ -142,7 +143,7 @@ Controls:
 
 ## Provider Trust
 
-The model provider may receive prompts, code snippets, command output, and reasoning context. Provider policy should be reviewed for:
+The model provider and any proxy/router may receive prompts, code snippets, command output, and reasoning context. Provider and proxy policy should be reviewed for:
 
 - data retention,
 - training use,
@@ -151,7 +152,7 @@ The model provider may receive prompts, code snippets, command output, and reaso
 - incident response,
 - access controls.
 
-Sensitive deployments should support local or private-model fallback where appropriate.
+Sensitive deployments should support local or private-model fallback where appropriate. A single external provider is both an availability dependency and a trust boundary.
 
 ---
 
@@ -179,7 +180,7 @@ Fetched pages should not be allowed to override harness instructions.
 | Secret exposure in logs | Credential compromise | Redaction, limited logging, retention controls. |
 | Prompt injection from files/web | Wrong or unsafe actions | Instruction hierarchy, content isolation. |
 | Unauthorized pre-spec edit | Scope violation | Enforce mutation gate in tool router. |
-| Subagent overexposure | Data leakage | Scoped prompts and redaction. |
+| Subagent overexposure | Data leakage | Scoped prompts, reduced privileges, and redaction. |
 | External API write | Unintended side effects | Approval gates and allowlists. |
 
 ---
@@ -189,6 +190,6 @@ Fetched pages should not be allowed to override harness instructions.
 - Prefer hard policy for high-impact actions.
 - Keep logs minimal and redact aggressively.
 - Treat external text as untrusted data.
-- Sandbox shell execution where possible.
+- Sandbox shell execution and subagent workers where possible.
 - Keep approval states explicit and durable.
 - Audit tool calls, not just assistant messages.

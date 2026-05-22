@@ -6,6 +6,8 @@
 
 The prompt layer defines the harness operating contract. It tells the model what role it is playing, which mode it is in, how much autonomy it has, how to use tools, how to verify work, and how to terminate.
 
+The primary identity anchor is Droid: an AI software-engineering agent built to operate on real repositories through tools rather than as a generic chat assistant.
+
 The harness uses a small set of prompt variants rather than one monolithic prompt. Each variant is selected for a runtime purpose: autonomous execution, interactive CLI work, mission workers, summaries, or title generation.
 
 ---
@@ -74,6 +76,10 @@ Interactive-specific capabilities:
 - `Task` for subagent delegation.
 - skill invocation for specialized procedures.
 - dynamic UI-oriented workflows such as spec approval.
+- concise user-facing answers, usually 1–4 sentences unless more detail is needed.
+- no emojis unless explicitly requested.
+- minimal code comments unless comments are necessary for clarity.
+- optional `json-render` dashboard blocks for structured CLI UI output.
 
 Interactive Mode should still avoid unnecessary questions. It asks only when the answer materially affects implementation or when an operator-level blocker prevents safe progress.
 

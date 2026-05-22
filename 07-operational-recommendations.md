@@ -12,7 +12,7 @@ This document gives practical guidance for running, building, and auditing the h
 
 ### Minimize Prompt/Response Logging
 
-Store the least conversation data required for debugging and compliance.
+Store the least conversation data required for debugging and compliance. Full prompt/response logging should be treated as sensitive data capture, not ordinary telemetry.
 
 Recommended controls:
 
@@ -56,7 +56,7 @@ Run shell commands with isolation:
 
 ### Monitor Long Sessions
 
-Long conversations increase risk and cost.
+Long conversations increase risk and cost. They also increase the chance of unbounded test-fix loops.
 
 Recommended controls:
 
@@ -64,7 +64,8 @@ Recommended controls:
 - compaction thresholds,
 - maximum tool-call depth,
 - runaway command detection,
-- final validation requirements.
+- final validation requirements,
+- loop-breaker rules for repeated failures.
 
 ---
 
@@ -84,6 +85,10 @@ Use explicit tools for state transitions:
 - `EndFeatureRun` for worker completion.
 
 Avoid relying on free-form assistant prose for critical state changes.
+
+### Consider Server-Side Tool Schema References
+
+If the model/provider stack supports it, keep canonical tool schemas server-side and send compact references or stable tool sets where possible. This reduces prompt bloat and avoids cache invalidation from unnecessary schema churn.
 
 ### Design Tool Schemas Carefully
 
@@ -115,6 +120,10 @@ Do not compact away the fact that a spec was approved or that a user decision is
 
 The message layer should support both ordinary function calls and custom tool calls. Patch application, UI interactions, and provider-specific features may not fit a single function-call representation.
 
+### Provide Model Provider Fallbacks
+
+Avoid hard dependency on a single external model/provider. Configure fallback models or local/private inference for sensitive or availability-critical deployments.
+
 ### Build for Mode-Specific Policy
 
 Tool visibility and permission should depend on mode:
@@ -140,7 +149,7 @@ Checklist:
 - [ ] Are prompts/responses logged? If yes, where and for how long?
 - [ ] Are secrets redacted from tool outputs?
 - [ ] Are external URLs validated against SSRF/private-network rules?
-- [ ] Are subagent prompts scoped and redacted?
+- [ ] Are subagent prompts scoped, redacted, and run with reduced privileges?
 - [ ] Are handoff results durable and unambiguous?
 - [ ] Are final answers consistent with validation results?
 - [ ] Can long conversations be compacted safely?
@@ -159,4 +168,5 @@ Recommended baseline:
 5. subagents receive minimal scoped context,
 6. summaries preserve active state,
 7. all tool calls are audit logged with redaction,
-8. final responses include validation status.
+8. final responses include validation status,
+9. provider fallback or degradation behavior is defined.

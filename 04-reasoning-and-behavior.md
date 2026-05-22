@@ -21,6 +21,8 @@ Architecturally, reasoning items serve four roles:
 3. **Continuity** — later turns can replay prior reasoning context.
 4. **Audit signal** — operators can infer why a tool was selected when summaries are visible.
 
+The dominant reasoning style is action-oriented: the model typically moves from understanding the user's goal to a concrete next tool action. Self-correction language such as "wait", "actually", and "I should" is a normal part of the loop rather than a failure condition.
+
 Reasoning content should not be treated as authoritative state. Tool outputs and committed files are the source of truth.
 
 ---
@@ -62,13 +64,13 @@ Common action patterns:
 | Delegate work | `Task` |
 | Complete worker run | `EndFeatureRun` |
 
-The model often reasons in intent language rather than naming exact tools. Tool descriptions then guide the final call shape.
+The model often reasons in intent language rather than naming exact tools. Tool descriptions then guide the final call shape. This is why schema descriptions matter: they shape the final translation from intent to tool invocation.
 
 ---
 
 ## Parallel Tool Calls
 
-The harness supports parallel tool calls when operations are independent.
+The harness supports parallel tool calls when operations are independent. Parallelism can range from small reconnaissance bundles to large burst-reading/searching batches, but dependent edits and validation loops should remain serialized.
 
 Good parallelism:
 
@@ -114,7 +116,8 @@ Design implications:
 - avoid unnecessary churn in long system/tool descriptions,
 - keep dynamic reminders concise,
 - summarize or compact when history becomes unwieldy,
-- preserve stable ids for tool calls and outputs.
+- preserve stable ids for tool calls and outputs,
+- avoid changing full tool schemas unnecessarily because schema changes can invalidate provider caches.
 
 ---
 
@@ -154,7 +157,7 @@ Common recovery patterns:
 | Ambiguous user requirement | Use `AskUser` if the choice affects implementation. |
 | Spec not approved | Do not mutate; revise or wait for approval. |
 
-Recovery should remain scoped. The agent should not perform broad unrelated refactors just because a local fix failed.
+Recovery should remain scoped. The agent should not perform broad unrelated refactors just because a local fix failed. Long test-fix loops need an operator-visible budget or stop condition so flaky failures do not become unbounded tool cycles.
 
 ---
 
